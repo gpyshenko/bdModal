@@ -86,15 +86,15 @@ function backdropModal() {
         }, 400)
     }
     
-    // function change(thatModal, style) {
-    //     if (item.hasClass('active')) {
-    //         fadeOut(item, 'active', 300);
-    //     }
+    function change(thatModal, style) {
+        if (thatModal.classList.contains('active')) {
+            fadeOut(item, 'active', 300);
+        }
 
-    //     setTimeout(function () {
-    //         fadeIn(thatModal, style, 'active');
-    //     }, duration + 100)
-    // }
+        setTimeout(function () {
+            fadeIn(thatModal, style, 'active');
+        }, duration + 100)
+    }
 
     function outsideClick() {
         document.addEventListener("click", function (e) {
