@@ -1,0 +1,99 @@
+:root {
+    --transitionDefault: .3s ease-out;
+}
+
+.overflow {
+    padding-right: 17px;
+    overflow: hidden;
+}
+
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 4;
+    display: none;
+    width: 100%;
+    height: 150vh;
+    background-color: rgba(218,218,218,.9);
+    opacity: 0;
+    transition: var(--transitionDefault);
+}
+
+.backdrop.active {
+    opacity: .7;
+}
+
+.backdropContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    padding: 50px 0;
+    overflow: auto;
+    box-sizing: border-box;
+}
+
+.backdropItem {
+    position: relative;
+    z-index: 5;
+    display: none;
+    width: 100%;
+    max-width: 684px;
+    margin: auto;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: var(--transitionDefault);
+}
+
+.backdropItem.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.backdrop-close {
+    position: absolute;
+    color: #000;
+}
+
+.backdrop-close i {
+    display: block;
+    font-size: 20px;
+    color: currentColor;
+    transition: var(--transitionDefault);
+}
+
+@media (max-width: 992px) {
+    .backdropContainer {
+        align-items: flex-start;
+        padding-top: 59px;
+        padding-bottom: 0;
+    }
+
+    .backdropItem {
+        margin-top: 0;
+    }
+
+    .backdrop-close {
+        top: 28px;
+    }
+}
+
+@media (max-width: 992px) {
+    .overflow {
+        padding-right: 0;
+        overflow: hidden;
+    }
+}
+
+@media (max-width: 575px) {
+    .backdropItem {
+        border-radius: 0;
+        box-shadow: none;
+    }
+}
