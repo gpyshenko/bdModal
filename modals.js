@@ -1,13 +1,33 @@
 // Modals and backdrop
-function backdropModal() {
+function backdropModal(options) {
     var body = document.querySelector('body');
     var backdrop;
     var container = document.querySelector('.backdropContainer');
     var itemClass = '.backdropItem';
     var item = document.querySelectorAll(itemClass);
     var closeBtn = document.querySelectorAll('.backdrop-close');
-    var duration = 300;
-    
+    var settings;
+    var defaultSettings = {
+        className: '.bd',
+        speed: 300
+    }
+
+    function hasProp(prop) {
+        if (!options.hasOwnProperty(prop)) {
+            settings[prop] = defaultSettings[prop];
+        } else {
+            settings[prop] = options[prop];
+        }
+    }
+
+    if (!options && typeof options !== 'object') {
+        settings = defaultSettings
+    } else {
+        settings = options;
+        hasProp('className');
+        hasProp('speed');
+    }
+
     function createBackdrop() {
         var el = document.createElement('div');
         el.className = 'backdrop';
@@ -18,16 +38,24 @@ function backdropModal() {
     // Utils
     function s(el, cb) {
         if (el.length === undefined) {
+            if (!el) return;
             cb(el)
         } else {
+            if (!el) return;
             el.forEach(function (el, indx) {
                 cb(el, indx)
             })
         }
     }
-    function resetClass(el, state) {
+    function removeClass(el, state) {
         s(el, function (el) {
             el.classList.remove(state);
+        })
+    }
+
+    function addClass(el, state) {
+        s(el, function (el) {
+            el.classList.add(state);
         })
     }
 
@@ -39,20 +67,12 @@ function backdropModal() {
 
     function fadeIn(el, display, style) {
         toggleDisplay(el, display);
-        setTimeout(function () {
-            s(el, function (el) {
-                el.classList.add(style);
-            })
-        }, 100)
+        setTimeout(addClass, 100, el, style)
     }
 
     function fadeOut(el, style, time) {
-        s(el, function (el) {
-            el.classList.remove(style);
-        })
-        setTimeout(function () {
-            toggleDisplay(el, 'none');
-        }, time)
+        removeClass(el, style);
+        setTimeout(toggleDisplay, time, el, 'none')
     }
 
     // Methods
@@ -62,7 +82,7 @@ function backdropModal() {
 
     function open(thatModal, style) {
         var display;
-        body.classList.add('overflow');
+        addClass(body, 'overflow');
         openBackdrop();
         toggleDisplay(container, 'flex');
         if (!style) {
@@ -74,26 +94,26 @@ function backdropModal() {
     }
 
     function closeBackdrop() {
-        fadeOut(backdrop, 'active', duration);
+        fadeOut(backdrop, 'active', settings.speed);
     }
 
     function close() {
         closeBackdrop();
-        fadeOut(item, 'active', duration);
+        fadeOut(item, 'active', settings.speed);
         setTimeout(function () {
             toggleDisplay(container, 'none');
-            body.classList.remove('overflow');
+            removeClass(body, 'overflow');
         }, 400)
     }
     
     function change(thatModal, style) {
         if (thatModal.classList.contains('active')) {
-            fadeOut(item, 'active', 300);
+            fadeOut(item, 'active', settings.speed);
         }
 
         setTimeout(function () {
             fadeIn(thatModal, style, 'active');
-        }, duration + 100)
+        }, settings.speed + 100)
     }
 
     function outsideClick() {
@@ -110,24 +130,26 @@ function backdropModal() {
 
     // Init
     createBackdrop();
-    closeBtn.forEach(function (el) {
+    s(closeBtn,function (el) {
         el.addEventListener('click', close);
     })
 
     outsideClick()
 
+    console.log(settings);
+    s(document.querySelectorAll(settings.className), function(el) {
+        el.addEventListener('click', function() {
+            var data = this.dataset.modal;
+            open(document.querySelector('#' + data));
+        })
+    })
+
     // Api
     this.open = function(thatModal, style) {
-        console.log('Opened');
         open(thatModal, style);
     }
 }
 
-var bd = new backdropModal();
-
-document.querySelector('.asd').addEventListener('click', function() {
-    bd.open(document.querySelector('#modal'))
-})
-document.querySelector('.asd2').addEventListener('click', function () {
-    bd.open(document.querySelector('#modal2'))
-})
+var bd = new backdropModal({
+    className: '.qwe'
+});
