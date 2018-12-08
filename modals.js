@@ -1,6 +1,7 @@
 // Modals and backdrop
 function backdropModal(options) {
     var body = document.querySelector('body');
+    var bodyOverflow = 'overflow';
     var backdrop;
     var container = document.querySelector('.backdropContainer');
     var itemClass = '.backdropItem';
@@ -47,6 +48,17 @@ function backdropModal(options) {
             })
         }
     }
+
+    function typeSelector(thatModal) {
+        var modal;
+        if (typeof thatModal === 'string') {
+            modal = document.querySelector(thatModal)
+        } else {
+            modal = thatModal
+        }
+        return modal
+    }
+
     function removeClass(el, state) {
         s(el, function (el) {
             el.classList.remove(state);
@@ -75,6 +87,11 @@ function backdropModal(options) {
         setTimeout(toggleDisplay, time, el, 'none')
     }
 
+    function setHeightModal() {
+        var height = document.documentElement.clientHeight;
+        container.style.height = height + 'px'
+    }
+
     // Methods
     function openBackdrop() {
         fadeIn(backdrop, 'block', 'active')
@@ -82,7 +99,7 @@ function backdropModal(options) {
 
     function open(thatModal, style) {
         var display;
-        addClass(body, 'overflow');
+        addClass(body, bodyOverflow);
         openBackdrop();
         toggleDisplay(container, 'flex');
         if (!style) {
@@ -97,12 +114,18 @@ function backdropModal(options) {
         fadeOut(backdrop, 'active', settings.speed);
     }
 
-    function close() {
+    function close(modal) {
+        var el;
+        if(modal) {
+            el = typeSelector(modal);
+        } else {
+            el = item
+        }
         closeBackdrop();
-        fadeOut(item, 'active', settings.speed);
+        fadeOut(el, 'active', settings.speed);
         setTimeout(function () {
             toggleDisplay(container, 'none');
-            removeClass(body, 'overflow');
+            removeClass(body, bodyOverflow);
         }, 400)
     }
     
@@ -128,14 +151,27 @@ function backdropModal(options) {
         });
     }
 
+    function resize() {
+        var timer;
+        window.addEventListener('resize', function () {
+            clearInterval(timer);
+            timer = setTimeout(setHeightModal, 300)
+        })
+    }
+
     // Init
     createBackdrop();
+    setHeightModal();
+    resize()
+    
     s(closeBtn,function (el) {
-        el.addEventListener('click', close);
+        el.addEventListener('click', function() {
+            close()
+        });
     })
 
-    outsideClick()
-
+    outsideClick();
+    
     console.log(settings);
     s(document.querySelectorAll(settings.className), function(el) {
         el.addEventListener('click', function() {
@@ -143,18 +179,23 @@ function backdropModal(options) {
             open(document.querySelector('#' + data));
         })
     })
-
+    
     // Api
     this.open = function(thatModal, style) {
-        open(thatModal, style);
+        open(typeSelector(thatModal), style);
+    }
+    this.close = function (thatModal) {
+        close(thatModal)
     }
 }
 
-var bd1 = new backdropModal({
+var bd = new backdropModal({
     className: '.qwe'
 });
 
-var bd2 = new backdropModal({
-    className: '.zxc',
-    speed: 2600
-});
+var asd = '#modal';
+var asdModal = document.querySelector(asd)
+
+document.querySelector('.openWith').addEventListener('click', function() {
+    bd.open(asd)
+})
