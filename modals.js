@@ -150,6 +150,11 @@ function backdropModal(options) {
     }
 }
 
-var bd = new backdropModal({
+var bd1 = new backdropModal({
     className: '.qwe'
+});
+
+var bd2 = new backdropModal({
+    className: '.zxc',
+    speed: 2600
 });
