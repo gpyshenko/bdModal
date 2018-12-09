@@ -1,6 +1,6 @@
 // Modals and backdrop
 function backdropModal(options) {
-    function init(options) {
+    function Init(options) {
         var body = document.querySelector('body');
         var bodyOverflow = 'overflow';
         var backdrop;
@@ -218,7 +218,7 @@ function backdropModal(options) {
             close(thatModal)
         }
     }
-    return new init(options)
+    return new Init(options)
 }
 
 var bd = backdropModal({
