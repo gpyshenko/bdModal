@@ -3,7 +3,6 @@
 }
 
 .overflow {
-    padding-right: 17px;
     overflow: hidden;
 }
 
@@ -43,8 +42,6 @@
 }
 
 .backdropItem {
-    position: relative;
-    z-index: 5;
     max-width: 684px;
     margin: auto;
     transform: translateY(20px);
@@ -55,38 +52,9 @@
     transform: translateY(0);
 }
 
-.backdrop-close {
-    position: absolute;
-    color: #000;
-}
-
 @media (max-width: 992px) {
     .backdropContainer {
         align-items: flex-start;
-        padding-top: 59px;
-        padding-bottom: 0;
-    }
-
-    .backdropItem {
-        margin-top: 0;
-    }
-
-    .backdrop-close {
-        top: 28px;
-    }
-}
-
-@media (max-width: 992px) {
-    .overflow {
-        padding-right: 0;
-        overflow: hidden;
-    }
-}
-
-@media (max-width: 575px) {
-    .backdropItem {
-        border-radius: 0;
-        box-shadow: none;
     }
 }
 

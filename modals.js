@@ -7,10 +7,11 @@ function backdropModal(options) {
         var container = document.querySelector('.backdropContainer');
         var itemClass = '.backdropItem';
         var item = document.querySelectorAll(itemClass);
-        var closeBtn = document.querySelectorAll('.backdrop-close');
         var settings;
         var defaultSettings = {
-            className: '.bd',
+            openBtn: '.bdOpen',
+            closeBtn: '.bdClose',
+            changeBtn: '.bdChange',
             speed: 300
         }
 
@@ -26,8 +27,9 @@ function backdropModal(options) {
             settings = defaultSettings
         } else {
             settings = options;
-            hasProp('className');
-            hasProp('speed');
+            ['openBtn', 'closeBtn', 'speed','changeBtn'].forEach(function(el) {
+                hasProp(el);
+            })
         }
 
         function createBackdrop() {
@@ -38,26 +40,42 @@ function backdropModal(options) {
         }
 
         // Utils
-        function s(el, cb) {
-            if (el.length === undefined) {
-                if (!el) return;
-                cb(el)
+        function typeSelector(selector) {
+            var element;
+            if (typeof selector === 'string') {
+                element = document.querySelectorAll(selector)
             } else {
-                if (!el) return;
-                el.forEach(function (el, indx) {
+                element = selector
+            }
+            return element
+        }
+
+        function s(el, cb) {
+            if(typeof el === 'string') {
+                document.querySelectorAll(el).forEach(function (el, indx) {
                     cb(el, indx)
                 })
+            } else {
+                if (!el) return;
+                if (el.length === undefined) {
+                    cb(el)
+                } else {
+                    el.forEach(function (el, indx) {
+                        cb(el, indx)
+                    })
+                }
             }
         }
 
-        function typeSelector(thatModal) {
-            var modal;
-            if (typeof thatModal === 'string') {
-                modal = document.querySelector(thatModal)
+        function hasClass(el,className) {
+            var element;
+            if (!el) return;
+            if (typeof el === 'string') {
+                element = document.querySelector(el);
             } else {
-                modal = thatModal
+                element = el;
             }
-            return modal
+            return element.classList.contains(className)
         }
 
         function removeClass(el, state) {
@@ -117,7 +135,7 @@ function backdropModal(options) {
 
         function close(modal) {
             var el;
-            if (modal) {
+            if (modal && modal === false) {
                 el = typeSelector(modal);
             } else {
                 el = item
@@ -131,14 +149,10 @@ function backdropModal(options) {
         }
 
         function change(current,next) {
-            var currentModal = document.querySelector(current);
-            var nextModal = document.querySelector(next);
-            if (currentModal.classList.contains('active')) {
-                fadeOut(currentModal, 'active', settings.speed);
-            }
-
+            if (!hasClass(current, 'active')) return;
+            fadeOut(current, 'active', settings.speed);
             setTimeout(function () {
-                fadeIn(nextModal, 'flex', 'active');
+                fadeIn(next, 'flex', 'active');
             }, settings.speed + 100)
         }
 
@@ -147,7 +161,7 @@ function backdropModal(options) {
                 var target = e.target;
                 if (target.closest(itemClass)) return;
                 s(item, function (el) {
-                    if (el.classList.contains('active')) {
+                    if (hasClass(el,'active')) {
                         close();
                     }
                 })
@@ -167,8 +181,8 @@ function backdropModal(options) {
         setHeightModal();
         resize()
 
-        s(closeBtn, function (el) {
-            el.addEventListener('click', function () {
+        s(settings.closeBtn, function (el) {
+            el.addEventListener('click', function() {
                 close()
             });
         })
@@ -176,16 +190,24 @@ function backdropModal(options) {
         outsideClick();
 
         console.log(settings);
-        s(document.querySelectorAll(settings.className), function (el) {
+        s(settings.openBtn, function (el) {
             el.addEventListener('click', function () {
                 var data = this.dataset.modal;
-                open(document.querySelector('#' + data));
+                open('#' + data);
+            })
+        })
+
+        s(settings.changeBtn, function(el) {
+            el.addEventListener('click', function() {
+                var data = this.dataset.target;
+                var parent = el.closest(itemClass);
+                change(parent, data);
             })
         })
 
         // Api
         this.open = function (thatModal, style) {
-            open(typeSelector(thatModal), style);
+            open(thatModal, style);
         }
 
         this.change = function (current, next) {
@@ -200,7 +222,8 @@ function backdropModal(options) {
 }
 
 var bd = backdropModal({
-    className: '.qwe'
+    openBtn: '.qwe',
+    closeBtn: '.bdClose'
 });
 
 var asd = '#modal';
