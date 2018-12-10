@@ -189,7 +189,6 @@ function backdropModal(options) {
 
         outsideClick();
 
-        console.log(settings);
         s(settings.openBtn, function (el) {
             el.addEventListener('click', function () {
                 var data = this.dataset.modal;
@@ -220,15 +219,3 @@ function backdropModal(options) {
     }
     return new Init(options)
 }
-
-var bd = backdropModal({
-    openBtn: '.qwe',
-    closeBtn: '.bdClose'
-});
-
-var asd = '#modal';
-var asdModal = document.querySelector(asd)
-
-document.querySelector('.openWith').addEventListener('click', function () {
-    bd.open(asdModal)
-})

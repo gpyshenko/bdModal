@@ -1,15 +1,10 @@
-:root {
-    --transitionDefault: .3s ease-out;
-}
-
 .overflow {
     overflow: hidden;
 }
 
 .backdrop, .backdropContainer, .backdropItem {
     display: none;
-    width: 100%;
-    transition: var(--transitionDefault);
+    transition: .3s ease-out;
     box-sizing: border-box;
 }
 
@@ -17,6 +12,7 @@
     position: fixed;
     top: 0;
     left: 0;
+    width: 100%;
 }
 
 .backdrop, .backdropItem {
@@ -42,7 +38,6 @@
 }
 
 .backdropItem {
-    max-width: 684px;
     margin: auto;
     transform: translateY(20px);
 }
@@ -50,20 +45,4 @@
 .backdropItem.active {
     opacity: 1;
     transform: translateY(0);
-}
-
-@media (max-width: 992px) {
-    .backdropContainer {
-        align-items: flex-start;
-    }
-}
-
-
-/* */
-
-.modal {
-    width: 100%;
-    height: 800px;
-    background-color: #fff;
-    box-shadow: 0 3px 9px rgba(0,0,0,.7)
 }
