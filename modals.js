@@ -122,6 +122,10 @@ function bdModal(options) {
             fadeIn(backdrop, 'block', 'active')
         }
 
+        function closeBackdrop() {
+            fadeOut(backdrop, 'active', settings.speed);
+        }
+
         function setCurrentModal(el) {
             currentModal = document.querySelector(el);
         }
@@ -132,10 +136,6 @@ function bdModal(options) {
             openBackdrop();
             toggleDisplay(container, 'flex');
             fadeIn(thatModal, 'flex', 'active');
-        }
-
-        function closeBackdrop() {
-            fadeOut(backdrop, 'active', settings.speed);
         }
 
         function close(modal) {
