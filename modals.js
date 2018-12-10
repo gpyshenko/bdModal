@@ -4,11 +4,14 @@ function bdModal(options) {
         var settings,
             backdrop,
             currentModal,
+            openBtn,
+            closeBtn,
+            changeBtn,
             body = document.querySelector('body'),
             bodyOverflow = 'overflow',
             container = document.querySelector('.backdropContainer'),
             itemClass = '.backdropItem',
-            item = document.querySelectorAll(itemClass),
+            item,
             defaultSettings = {
                 openBtn: '.bdOpen',
                 closeBtn: '.bdClose',
@@ -34,10 +37,12 @@ function bdModal(options) {
         }
 
         function createBackdrop() {
-            var el = document.createElement('div');
-            el.className = 'backdrop';
-            body.insertBefore(el, container);
-            backdrop = el;
+            if(!document.querySelector('.backdrop')) {
+                var el = document.createElement('div');
+                el.className = 'backdrop';
+                body.insertBefore(el, container);
+                backdrop = el;
+            }
         }
 
         // Utils
@@ -72,7 +77,7 @@ function bdModal(options) {
             var element;
             if (!el) return;
             if (typeof el === 'string') {
-                element = document.querySelector(el);
+                element = document.querySelectorAll(el);
             } else {
                 element = el;
             }
@@ -117,8 +122,12 @@ function bdModal(options) {
             fadeIn(backdrop, 'block', 'active')
         }
 
+        function setCurrentModal(el) {
+            currentModal = document.querySelector(el);
+        }
+
         function open(thatModal) {
-            currentModal = typeSelector(thatModal);
+            setCurrentModal(thatModal);
             addClass(body, bodyOverflow);
             openBackdrop();
             toggleDisplay(container, 'flex');
@@ -131,6 +140,7 @@ function bdModal(options) {
 
         function close(modal) {
             var el;
+            currentModal = null;
             if (modal && modal === false) {
                 el = typeSelector(modal);
             } else {
@@ -145,23 +155,12 @@ function bdModal(options) {
         }
 
         function change(current, next) {
+            setCurrentModal(next);
             if (!hasClass(current, 'active')) return;
             fadeOut(current, 'active', settings.speed);
             setTimeout(function () {
                 fadeIn(next, 'flex', 'active');
             }, settings.speed + 100)
-        }
-
-        function outsideClick() {
-            document.addEventListener("click", function (e) {
-                var target = e.target;
-                if (target.closest(itemClass)) return;
-                s(item, function (el) {
-                    if (hasClass(el, 'active')) {
-                        close();
-                    }
-                })
-            });
         }
 
         function resize() {
@@ -172,37 +171,73 @@ function bdModal(options) {
             })
         }
 
+        function setElements() {
+            openBtn = typeSelector(settings.openBtn);
+            item = typeSelector(itemClass);
+            closeBtn = typeSelector(settings.closeBtn);
+            changeBtn = typeSelector(settings.changeBtn); 
+        }
+
+        function outsideClick() {
+            document.addEventListener('click', function (e) {
+                var target = e.target;
+                if (target.closest(itemClass)) return;
+                s(item, function (el) {
+                    if (hasClass(el, 'active')) {
+                        close();
+                    }
+                })
+            });
+        }
+
+        function updateListener(el,evt,func) {
+            el.removeEventListener(evt, func)
+            el.addEventListener(evt, func)
+        }
+
+        function openBtnInit() {
+            function listener() {
+                var data = this.dataset.modal;
+                open('#' + data);
+            }
+            s(openBtn, function(el) {
+                updateListener(el,'click', listener)
+            })
+        }
+
+        function closeBtnInit() {
+            s(closeBtn, function (el) {
+                updateListener(el,'click', close)
+            })
+        }
+
+        function changeBtnInit() {
+            function listener() {
+                var data = this.dataset.target;
+                change(currentModal, data);
+            }
+            s(changeBtn, function (el) {
+                updateListener(el,'click', listener)
+            })
+        }
+        
+        function initElements() {
+            setElements();
+            outsideClick();
+            openBtnInit();
+            closeBtnInit();
+            changeBtnInit();
+        }
+
         // Init
         createBackdrop();
         setHeightModal();
-        resize()
-
-        s(settings.closeBtn, function (el) {
-            el.addEventListener('click', function () {
-                close()
-            });
-        })
-
-        outsideClick();
-
-        s(settings.openBtn, function (el) {
-            el.addEventListener('click', function () {
-                var data = this.dataset.modal;
-                open('#' + data);
-            })
-        })
-
-        s(settings.changeBtn, function (el) {
-            el.addEventListener('click', function () {
-                var data = this.dataset.target;
-                var parent = el.closest(itemClass);
-                change(parent, data);
-            })
-        })
+        resize();
+        initElements();
 
         // Api
-        this.open = function (thatModal, style) {
-            open(thatModal, style);
+        this.open = function (thatModal) {
+            open(thatModal);
         }
 
         this.change = function (current, next) {
@@ -212,8 +247,15 @@ function bdModal(options) {
         this.close = function (thatModal) {
             close(thatModal)
         }
-        this.cur = function(){
-            console.log(currentModal)
+
+        this.dynamic = function (content, thatModal) {
+            container.insertAdjacentHTML('beforeEnd', content);
+            initElements();
+            open(thatModal);
+        }
+
+        this.current = function(){
+            return currentModal
         }
     }
     return new Init(options)
