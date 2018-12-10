@@ -1,19 +1,20 @@
 // Modals and backdrop
-function backdropModal(options) {
+function bdModal(options) {
     function Init(options) {
-        var body = document.querySelector('body');
-        var bodyOverflow = 'overflow';
-        var backdrop;
-        var container = document.querySelector('.backdropContainer');
-        var itemClass = '.backdropItem';
-        var item = document.querySelectorAll(itemClass);
-        var settings;
-        var defaultSettings = {
-            openBtn: '.bdOpen',
-            closeBtn: '.bdClose',
-            changeBtn: '.bdChange',
-            speed: 300
-        }
+        var settings,
+            backdrop,
+            currentModal,
+            body = document.querySelector('body'),
+            bodyOverflow = 'overflow',
+            container = document.querySelector('.backdropContainer'),
+            itemClass = '.backdropItem',
+            item = document.querySelectorAll(itemClass),
+            defaultSettings = {
+                openBtn: '.bdOpen',
+                closeBtn: '.bdClose',
+                changeBtn: '.bdChange',
+                speed: 300
+            }
 
         function hasProp(prop) {
             if (!options.hasOwnProperty(prop)) {
@@ -27,7 +28,7 @@ function backdropModal(options) {
             settings = defaultSettings
         } else {
             settings = options;
-            ['openBtn', 'closeBtn', 'speed','changeBtn'].forEach(function(el) {
+            ['openBtn', 'closeBtn', 'speed', 'changeBtn'].forEach(function (el) {
                 hasProp(el);
             })
         }
@@ -51,7 +52,7 @@ function backdropModal(options) {
         }
 
         function s(el, cb) {
-            if(typeof el === 'string') {
+            if (typeof el === 'string') {
                 document.querySelectorAll(el).forEach(function (el, indx) {
                     cb(el, indx)
                 })
@@ -67,7 +68,7 @@ function backdropModal(options) {
             }
         }
 
-        function hasClass(el,className) {
+        function hasClass(el, className) {
             var element;
             if (!el) return;
             if (typeof el === 'string') {
@@ -116,17 +117,12 @@ function backdropModal(options) {
             fadeIn(backdrop, 'block', 'active')
         }
 
-        function open(thatModal, style) {
-            var display;
+        function open(thatModal) {
+            currentModal = typeSelector(thatModal);
             addClass(body, bodyOverflow);
             openBackdrop();
             toggleDisplay(container, 'flex');
-            if (!style) {
-                display = 'flex'
-            } else {
-                display = style
-            }
-            fadeIn(thatModal, display, 'active');
+            fadeIn(thatModal, 'flex', 'active');
         }
 
         function closeBackdrop() {
@@ -148,7 +144,7 @@ function backdropModal(options) {
             }, settings.speed + 100)
         }
 
-        function change(current,next) {
+        function change(current, next) {
             if (!hasClass(current, 'active')) return;
             fadeOut(current, 'active', settings.speed);
             setTimeout(function () {
@@ -161,7 +157,7 @@ function backdropModal(options) {
                 var target = e.target;
                 if (target.closest(itemClass)) return;
                 s(item, function (el) {
-                    if (hasClass(el,'active')) {
+                    if (hasClass(el, 'active')) {
                         close();
                     }
                 })
@@ -182,7 +178,7 @@ function backdropModal(options) {
         resize()
 
         s(settings.closeBtn, function (el) {
-            el.addEventListener('click', function() {
+            el.addEventListener('click', function () {
                 close()
             });
         })
@@ -196,8 +192,8 @@ function backdropModal(options) {
             })
         })
 
-        s(settings.changeBtn, function(el) {
-            el.addEventListener('click', function() {
+        s(settings.changeBtn, function (el) {
+            el.addEventListener('click', function () {
                 var data = this.dataset.target;
                 var parent = el.closest(itemClass);
                 change(parent, data);
@@ -215,6 +211,9 @@ function backdropModal(options) {
 
         this.close = function (thatModal) {
             close(thatModal)
+        }
+        this.cur = function(){
+            console.log(currentModal)
         }
     }
     return new Init(options)
