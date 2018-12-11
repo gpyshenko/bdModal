@@ -2,10 +2,6 @@
     overflow: hidden;
 }
 
-.compensate {
-    padding-right: 17px;
-}
-
 .backdrop, .backdropContainer, .backdropItem {
     display: none;
     transition: .3s ease-out;

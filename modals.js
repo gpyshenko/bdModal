@@ -116,10 +116,10 @@ function bdModal(options) {
             var width = window.innerWidth - document.documentElement.clientWidth;
             if(arg) {
                 if (width != '0') {
-                    addClass(body, 'compensate')
+                    body.style.paddingRight = width + 'px'
                 }
             } else {
-                removeClass(body, 'compensate')
+                body.style.paddingRight = 0 + 'px'
             }
         }
 
@@ -152,7 +152,6 @@ function bdModal(options) {
 
         function close(modal) {
             var el;
-            paddingRight(false)
             currentModal = null;
             if (modal && modal === false) {
                 el = typeSelector(modal);
@@ -163,6 +162,7 @@ function bdModal(options) {
             fadeOut(el, 'active', settings.speed);
             setTimeout(function () {
                 toggleDisplay(container, 'none');
+                paddingRight()
                 removeClass(body, bodyOverflow);
             }, settings.speed + 100)
         }
