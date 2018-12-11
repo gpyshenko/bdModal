@@ -112,7 +112,18 @@ function bdModal(options) {
             setTimeout(toggleDisplay, time, el, 'none')
         }
 
-        function setHeightModal() {
+        function paddingRight(arg) {
+            var width = window.innerWidth - document.documentElement.clientWidth;
+            if(arg) {
+                if (width != '0') {
+                    addClass(body, 'compensate')
+                }
+            } else {
+                removeClass(body, 'compensate')
+            }
+        }
+
+        function setSize() {
             var height = document.documentElement.clientHeight;
             container.style.height = height + 'px'
         }
@@ -131,6 +142,7 @@ function bdModal(options) {
         }
 
         function open(thatModal) {
+            paddingRight(true)
             setCurrentModal(thatModal);
             addClass(body, bodyOverflow);
             openBackdrop();
@@ -140,6 +152,7 @@ function bdModal(options) {
 
         function close(modal) {
             var el;
+            paddingRight(false)
             currentModal = null;
             if (modal && modal === false) {
                 el = typeSelector(modal);
@@ -167,7 +180,7 @@ function bdModal(options) {
             var timer;
             window.addEventListener('resize', function () {
                 clearInterval(timer);
-                timer = setTimeout(setHeightModal, 300)
+                timer = setTimeout(setSize, 300)
             })
         }
 
@@ -231,7 +244,7 @@ function bdModal(options) {
 
         // Init
         createBackdrop();
-        setHeightModal();
+        setSize();
         resize();
         initElements();
 
