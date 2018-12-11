@@ -236,7 +236,11 @@ function bdModal(options) {
         initElements();
 
         // Api
-        this.open = function (thatModal) {
+        this.open = function (thatModal, content) {
+            if(content) {
+                container.insertAdjacentHTML('beforeEnd', content);
+                initElements();
+            }
             open(thatModal);
         }
 
@@ -246,12 +250,6 @@ function bdModal(options) {
 
         this.close = function (thatModal) {
             close(thatModal)
-        }
-
-        this.dynamic = function (content, thatModal) {
-            container.insertAdjacentHTML('beforeEnd', content);
-            initElements();
-            open(thatModal);
         }
 
         this.current = function(){

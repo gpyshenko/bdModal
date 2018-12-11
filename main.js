@@ -24,9 +24,9 @@ var modal3 = `<div id="modal3" class="backdropItem">
         </div>`
 
 document.querySelector('.add').addEventListener('click', function () {
-    bd.dynamic(modal2, '#modal2')
+    bd.open('#modal2', modal2)
 })
 
 document.querySelector('.add2').addEventListener('click', function () {
-    bd.dynamic(modal3, '#modal3')
+    bd.open('#modal3', modal3)
 })
