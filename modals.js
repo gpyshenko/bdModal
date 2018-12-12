@@ -3,7 +3,6 @@ function bdModal(options) {
     function Init(options) {
         var settings,
             backdrop,
-            currentModal,
             openBtn,
             closeBtn,
             changeBtn,
@@ -12,6 +11,12 @@ function bdModal(options) {
             container = document.querySelector('.backdropContainer'),
             itemClass = '.backdropItem',
             item,
+            configObserver = {
+                childList: true 
+            },
+            detail = {
+                current: null
+            },
             defaultSettings = {
                 openBtn: '.bdOpen',
                 closeBtn: '.bdClose',
@@ -123,10 +128,10 @@ function bdModal(options) {
             }
         }
 
-        function setSize() {
-            var height = document.documentElement.clientHeight;
-            container.style.height = height + 'px'
-        }
+        // Events
+        var openEvent = new CustomEvent('open', {
+            detail: detail
+        });
 
         // Methods
         function openBackdrop() {
@@ -138,7 +143,8 @@ function bdModal(options) {
         }
 
         function setCurrentModal(el) {
-            currentModal = document.querySelector(el);
+            detail.current = document.querySelector(el);
+            document.dispatchEvent(openEvent);
         }
 
         function open(thatModal) {
@@ -152,7 +158,6 @@ function bdModal(options) {
 
         function close(modal) {
             var el;
-            currentModal = null;
             if (modal && modal === false) {
                 el = typeSelector(modal);
             } else {
@@ -174,14 +179,6 @@ function bdModal(options) {
             setTimeout(function () {
                 fadeIn(next, 'flex', 'active');
             }, settings.speed + 100)
-        }
-
-        function resize() {
-            var timer;
-            window.addEventListener('resize', function () {
-                clearInterval(timer);
-                timer = setTimeout(setSize, 300)
-            })
         }
 
         function setElements() {
@@ -227,7 +224,7 @@ function bdModal(options) {
         function changeBtnInit() {
             function listener() {
                 var data = this.dataset.target;
-                change(currentModal, data);
+                change(detail.current, data);
             }
             s(changeBtn, function (el) {
                 updateListener(el,'click', listener)
@@ -242,17 +239,23 @@ function bdModal(options) {
             changeBtnInit();
         }
 
+        // MutationObserver
+        var observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function () {
+                initElements();
+            });
+        });
+
+        observer.observe(container, configObserver);
+
         // Init
         createBackdrop();
-        setSize();
-        resize();
         initElements();
 
         // Api
         this.open = function (thatModal, content) {
             if(content) {
                 container.insertAdjacentHTML('beforeEnd', content);
-                initElements();
             }
             open(thatModal);
         }
@@ -263,10 +266,6 @@ function bdModal(options) {
 
         this.close = function (thatModal) {
             close(thatModal)
-        }
-
-        this.current = function(){
-            return currentModal
         }
     }
     return new Init(options)

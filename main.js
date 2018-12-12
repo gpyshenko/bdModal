@@ -30,3 +30,7 @@ document.querySelector('.add').addEventListener('click', function () {
 document.querySelector('.add2').addEventListener('click', function () {
     bd.open('#modal3', modal3)
 })
+
+document.addEventListener('open', function(e) {
+   
+})
