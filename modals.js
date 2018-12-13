@@ -267,6 +267,10 @@ function bdModal(options) {
         this.close = function (thatModal) {
             close(thatModal)
         }
+
+        this.reinit = function() {
+            initElements();
+        }
     }
     return new Init(options)
 }
