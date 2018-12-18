@@ -31,6 +31,6 @@ document.querySelector('.add2').addEventListener('click', function () {
     bd.open('#modal3', modal3)
 })
 
-document.addEventListener('change', function(e) {
+document.addEventListener('state', function(e) {
    console.log(e.detail.state)
 })

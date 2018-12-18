@@ -82,7 +82,7 @@ function bdModal(options) {
             var element;
             if (!el) return;
             if (typeof el === 'string') {
-                element = document.querySelectorAll(el);
+                element = document.querySelector(el);
             } else {
                 element = el;
             }
@@ -134,7 +134,7 @@ function bdModal(options) {
         }
 
         function DispatchEvent(data) {
-            document.dispatchEvent(Event('change', data));
+            document.dispatchEvent(Event('state', data));
         }
 
         // Methods
@@ -178,14 +178,14 @@ function bdModal(options) {
             DispatchEvent({ state: 'closed' });
         }
 
-        function change(current, next) {
-            setCurrentModal(next);
-            if (!hasClass(current, 'active')) return;
-            fadeOut(current, 'active', settings.speed);
+        function change(next) {
+            if (!hasClass(detail.current, 'active')) return;
+            fadeOut(detail.current, 'active', settings.speed);
             setTimeout(function () {
                 fadeIn(next, 'flex', 'active');
             }, settings.speed + 100);
             DispatchEvent({ state: 'changed' });
+            setCurrentModal(next);
         }
 
         function setElements() {
@@ -232,7 +232,7 @@ function bdModal(options) {
         function changeBtnInit() {
             function listener() {
                 var data = this.dataset.target;
-                change(detail.current, data);
+                change(data);
             }
             s(changeBtn, function (el) {
                 updateListener(el,'click', listener)
@@ -268,8 +268,8 @@ function bdModal(options) {
             open(thatModal);
         }
 
-        this.change = function (current, next) {
-            change(current, next)
+        this.change = function (next) {
+            change(next)
         }
 
         this.close = function (thatModal) {
