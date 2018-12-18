@@ -129,9 +129,13 @@ function bdModal(options) {
         }
 
         // Events
-        var openEvent = new CustomEvent('open', {
-            detail: detail
-        });
+        function Event(type,params) {
+            return new CustomEvent(type, { detail: params})
+        }
+
+        function DispatchEvent(data) {
+            document.dispatchEvent(Event('change', data));
+        }
 
         // Methods
         function openBackdrop() {
@@ -144,7 +148,6 @@ function bdModal(options) {
 
         function setCurrentModal(el) {
             detail.current = document.querySelector(el);
-            document.dispatchEvent(openEvent);
         }
 
         function open(thatModal) {
@@ -154,6 +157,7 @@ function bdModal(options) {
             openBackdrop();
             toggleDisplay(container, 'flex');
             fadeIn(thatModal, 'flex', 'active');
+            DispatchEvent({state: 'opened'});
         }
 
         function close(modal) {
@@ -163,13 +167,15 @@ function bdModal(options) {
             } else {
                 el = item
             }
+            detail.current = null
             closeBackdrop();
             fadeOut(el, 'active', settings.speed);
             setTimeout(function () {
                 toggleDisplay(container, 'none');
                 paddingRight()
                 removeClass(body, bodyOverflow);
-            }, settings.speed + 100)
+            }, settings.speed + 100);
+            DispatchEvent({ state: 'closed' });
         }
 
         function change(current, next) {
@@ -178,7 +184,8 @@ function bdModal(options) {
             fadeOut(current, 'active', settings.speed);
             setTimeout(function () {
                 fadeIn(next, 'flex', 'active');
-            }, settings.speed + 100)
+            }, settings.speed + 100);
+            DispatchEvent({ state: 'changed' });
         }
 
         function setElements() {
@@ -195,6 +202,7 @@ function bdModal(options) {
                 s(item, function (el) {
                     if (hasClass(el, 'active')) {
                         close();
+                        DispatchEvent({ state: 'closed' });
                     }
                 })
             });
@@ -270,6 +278,7 @@ function bdModal(options) {
 
         this.reinit = function() {
             initElements();
+            DispatchEvent({ state: 'reinited' });
         }
     }
     return new Init(options)
